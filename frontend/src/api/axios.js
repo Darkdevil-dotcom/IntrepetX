@@ -1,8 +1,15 @@
 import axios from 'axios';
 
-const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// 1. Get the base URL from env, ensuring we remove any trailing slashes
+const envBase = import.meta.env.VITE_API_URL;
+const apiBase = envBase ? envBase.replace(/\/$/, "") : 'http://localhost:5000';
+
+// DEBUG: This will show up in your Browser Console (F12) 
+// so you can see exactly where the frontend is trying to talk to.
+console.log("Current API Base URL:", apiBase);
 
 const api = axios.create({
+  // This combines the base (http://localhost:5000) with /api
   baseURL: `${apiBase}/api`
 });
 

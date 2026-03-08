@@ -1,3 +1,7 @@
+const dns = require('dns');
+// Force Google DNS to resolve MongoDB SRV records
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -8,20 +12,25 @@ connectDB();
 
 const app = express();
 
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+// This allows your frontend (5173) to talk to this backend (5000)
+const allowedOrigin = 'http://localhost:5173'; 
 
 app.use(
   cors({
     origin: allowedOrigin,
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
+
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ status: 'ok', message: 'Backend is live' });
 });
 
+// Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/public', require('./routes/publicRoutes'));
 app.use('/api/achievements', require('./routes/achievementRoutes'));
